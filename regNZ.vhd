@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date:    01:49:28 10/19/2018 
+-- Create Date:    17:15:38 10/15/2018 
 -- Design Name: 
--- Module Name:    mux2x1 - Behavioral 
+-- Module Name:    regNZ - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -29,24 +29,34 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity mux2x1 is
-		Port ( sel : in  STD_LOGIC;
-				 in1 : in  STD_LOGIC_VECTOR (8 downto 0);
-				 in2 : in  STD_LOGIC_VECTOR (8 downto 0);
-				 s : out  STD_LOGIC_VECTOR (8 downto 0));
-end mux2x1;
+entity regNZ is
+	 Port ( clk : in  STD_LOGIC;
+			  rst : in  STD_LOGIC;
+			  nz_in : in  STD_LOGIC_VECTOR(1 downto 0);
+			  cargaNZ : in  STD_LOGIC;
+			  nz_out : out  STD_LOGIC_VECTOR(1 downto 0));
+end regNZ;
 
-architecture Behavioral of mux2x1 is
+architecture Behavioral of regNZ is
+
+signal temp_nz : STD_LOGIC_VECTOR(1 downto 0);
 
 begin
-	process(sel, in1, in2)
-		begin
-			if(sel = '0') then
-				s <= in1;
-			else 
-				s <= in2;
-			end if;
-	end process;
+
+process(clk, rst)
+begin
+	if(rst = '1') then
+		temp_nz <= "00";
+	elsif(clk'event and clk = '1') then
+		if(cargaNZ = '1') then
+			temp_nz <= nz_in;
+		else
+			temp_nz <= temp_nz;
+		end if;
+	end if;
+end process;
+
+nz_out <= temp_nz;
 
 end Behavioral;
 
